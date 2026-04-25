@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import CoinCards from "./combonents/CoinCards";
 import SelectLimit from "./combonents/SelectLimit";
 import FilterCoins from "./combonents/FilterCoins";
 import SortCoins from "./combonents/SortCoins";
-
 
 const App = () => {
   const [coins, setCoins] = useState([]);
