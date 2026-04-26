@@ -1,16 +1,16 @@
 import React from "react";
 import { Helix } from "ldrs/react";
 import "ldrs/react/Helix.css";
-//This is Test_01
+
 const CoinCards = ({ coins, loading, error }) => {
   return (
     <div>
-      {loading && ( // Default values shown
+      {loading && (
         <div className="loading-bar">
           <Helix size="150" speed="1" color="white" />
         </div>
       )}
-      {error && <div className="loadding-bar">{error}</div>}
+      {error && <div className="loading-bar">{error}</div>}
       {!loading && !error && (
         <>
           <main className="grid">
@@ -36,7 +36,7 @@ const CoinCards = ({ coins, loading, error }) => {
                             : "negative"
                         }
                       >
-                        %{coin.price_change_percentage_24h.toFixed(2)}
+                        %{coin.price_change_percentage_24h}
                       </p>
                       <p>Market Cap: ${coin.market_cap.toLocaleString()}</p>
                     </div>
@@ -44,7 +44,7 @@ const CoinCards = ({ coins, loading, error }) => {
                 );
               })
             ) : (
-              <p>No Matching Coins!!!</p>
+              <p><img src="/nomatch.svg" alt="nomatch" /></p>
             )}
           </main>
         </>

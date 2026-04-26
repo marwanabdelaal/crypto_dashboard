@@ -16,6 +16,8 @@ const App = () => {
       value.toLowerCase().includes(search.toLowerCase()),
     ),
   );
+  const erorrImg = <img src="/error.svg" alt="Error" />
+  
   const sortedCoins = [...filteredCoins].sort((a, b) => {
     if (sort === "market-cap-high") {
       return b.market_cap - a.market_cap;
@@ -44,7 +46,7 @@ const App = () => {
 
     const fetchData = async () => {
       try {
-        if (!ignore) setLoading(true);
+        if (!ignore) (setLoading(true), setError(null));
 
         const res = await fetch(API_URL);
 
@@ -58,7 +60,7 @@ const App = () => {
         }
       } catch (err) {
         if (!ignore) {
-          setError(err.message);
+          setError(erorrImg);
         }
       } finally {
         if (!ignore) {
