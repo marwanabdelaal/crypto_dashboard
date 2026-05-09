@@ -33,39 +33,62 @@ const CoinChart = ({ coinid }) => {
 
   useEffect(() => {
     const API_URL = `https://api.coingecko.com/api/v3/coins/${coinid}/market_chart?vs_currency=usd&days=7`;
+    const options = {
+      method: "GET",
+      headers: { "x-cg-demo-api-key": "" },
+    };
+    let ignore = false;
 
     const fetchData = async () => {
-      {
-        const res = await fetch(API_URL);
+      try {
+        if (!ignore) {
+          setLoading(true);
+          setError(null);
+        }
+
+        const res = await fetch(API_URL, options);
+
+        if (!res.ok) throw new Error("Failed to fetch data...");
 
         const data = await res.json();
+        const prices = data.prices.map((price) => ({
+          x: price[0],
+          y: price[1],
+        }));
 
-        const prices = data.map((price) => ({ x: price[0], y: price[1] }));
-        console.log(prices);
-
-        setChart({
-          datasets: [
-            {
-              label: "Prices (USD)",
-              data: prices,
-              fill: true,
-              borderColor: "#007bff",
-              backgrounColor: "rgba(0,123,255,0.1)",
-              pointRadius: 0,
-              tension: 0.3,
-            },
-          ],
-        });
-        setLoading(false);
+        if (!ignore) {
+          setChart({
+            datasets: [
+              {
+                label: "Prices (USD)",
+                data: prices,
+                fill: true,
+                borderColor: "#007bff",
+                backgroundColor: "rgba(0,123,255,0.1)",
+                pointRadius: 0,
+                tension: 0.3,
+              },
+            ],
+          });
+          setError(null);
+        }
+      } catch (err) {
+        if (!ignore) {
+          setError(err.message);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
   }, [coinid]);
 
-  if (loading)
-    return (
-      <>
+  return (
+    <>
+      {loading && (
         <Square
           size="35"
           stroke="9"
@@ -74,39 +97,40 @@ const CoinChart = ({ coinid }) => {
           speed="0.5"
           color="black"
         />
-      </>
-    );
-
-  return (
-    <div style={{ marginTop: "30px" }}>
-      <Line
-        data={chart}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { mode: "index", intersect: false },
-          },
-          scales: {
-            x: {
-              type: "time",
-              time: {
-                unit: "day",
+      )}
+      {error && <div>{erorrImg}</div>}
+      {!loading && !error && (
+        <div style={{ marginTop: "30px" }}>
+          <Line
+            data={chart}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { display: false },
+                tooltip: { mode: "index", intersect: false },
               },
-              ticks: {
-                autoSkip: true,
-                maxTicksLimit: 7,
+              scales: {
+                x: {
+                  type: "time",
+                  time: {
+                    unit: "day",
+                  },
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 7,
+                  },
+                },
+                y: {
+                  ticks: {
+                    callback: (value) => `${value.toLocaleString()}`,
+                  },
+                },
               },
-            },
-            y: {
-              ticks: {
-                callback: (value) => `$${value.toLocaleString()}`,
-              },
-            },
-          },
-        }}
-      ></Line>
-    </div>
+            }}
+          ></Line>
+        </div>
+      )}
+    </>
   );
 };
 
