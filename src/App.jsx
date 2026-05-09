@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import CoinCards from "./combonents/CoinCards";
-import SelectLimit from "./combonents/SelectLimit";
-import FilterCoins from "./combonents/FilterCoins";
-import SortCoins from "./combonents/SortCoins";
+import { Route, Routes } from "react-router";
+import AboutPage from "./pages/about.jsx";
+import HomePage from "./pages/home.jsx";
+import TopNav from "./combonents/topnav.jsx";
+import NotFoundPage from "./pages/notfound.jsx";
+import CoinDetails from "./pages/coinDetails.jsx";
 
 const App = () => {
   const [coins, setCoins] = useState([]);
@@ -16,29 +18,7 @@ const App = () => {
       value.toLowerCase().includes(search.toLowerCase()),
     ),
   );
-  const erorrImg = <img src="/error.svg" alt="Error" />
-  
-  const sortedCoins = [...filteredCoins].sort((a, b) => {
-    if (sort === "market-cap-high") {
-      return b.market_cap - a.market_cap;
-    }
-    if (sort === "market-cap-low") {
-      return a.market_cap - b.market_cap;
-    }
-    if (sort === "price-high") {
-      return b.current_price - a.current_price;
-    }
-    if (sort === "price-low") {
-      return a.current_price - b.current_price;
-    }
-    if (sort === "name") {
-      return a.name.localeCompare(b.name);
-    }
-    if (sort === "name2") {
-      return b.name.localeCompare(a.name);
-    }
-    return 0;
-  });
+  const erorrImg = <img src="/error.svg" alt="Error" />;
 
   useEffect(() => {
     const API_URL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${select}`;
@@ -60,7 +40,7 @@ const App = () => {
         }
       } catch (err) {
         if (!ignore) {
-          setError(erorrImg);
+          setError(err);
         }
       } finally {
         if (!ignore) {
@@ -78,11 +58,33 @@ const App = () => {
 
   return (
     <>
-      <h1>🚀 Crypto Dashboard</h1>
-      <FilterCoins search={search} setSearch={setSearch} />
-      <SortCoins sort={sort} setSort={setSort} />
-      <SelectLimit select={select} setSelect={setSelect} />
-      <CoinCards coins={sortedCoins} loading={loading} error={error} />
+      {error && <div className="loading-bar"> {erorrImg}</div>}
+      {!loading && !error && (
+        <>
+          <TopNav />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  loading={loading}
+                  error={error}
+                  select={select}
+                  setSelect={setSelect}
+                  search={search}
+                  setSearch={setSearch}
+                  sort={sort}
+                  setSort={setSort}
+                  filteredCoins={filteredCoins}
+                />
+              }
+            />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/coins/:id" element={<CoinDetails coins={coins} />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </>
+      )}
     </>
   );
 };
