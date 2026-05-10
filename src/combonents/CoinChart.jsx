@@ -101,7 +101,7 @@ const CoinChart = ({ coinid }) => {
       )}
       {error && <div>{erorrImg}</div>}
       {!loading && !error && (
-        <div style={{ marginTop: "30px" }}>
+        <div className="coin-details-container">
           <Line
             data={chart}
             options={{
