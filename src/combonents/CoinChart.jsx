@@ -65,6 +65,7 @@ const CoinChart = ({ coinid }) => {
                 fill: true,
                 borderColor: "#ffffffc0",
                 backgroundColor: "#fff",
+                color: "#fff",
                 pointRadius: 0,
                 tension: 0.3,
               },
