@@ -63,7 +63,7 @@ const CoinChart = ({ coinid }) => {
                 label: "Prices (USD)",
                 data: prices,
                 fill: true,
-                borderColor: "#ffffffc0",
+                borderColor: "#2b899993",
                 backgroundColor: "#fff",
                 color: "#fff",
                 pointRadius: 0,
